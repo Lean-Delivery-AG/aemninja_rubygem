@@ -4,26 +4,21 @@ require 'aemninja'
 
 ARGV << '--help' if ARGV.empty?
 
-aliases = {
-  "g"  => "generate",
-  "d"  => "destroy",
-  "c"  => "console",
-  "s"  => "server",
-  "db" => "dbconsole",
-  "r"  => "runner"
-}
-
 command = ARGV.shift
-command = aliases[command] || command
 
-if command == "new" then
-  app_path = ARGV.shift
-  package_name = ARGV.shift
+if command == "deploy" then
+  environment = ARGV.shift || 'local'
+  Aemninja::Commands.deploy!(environment)
 
-  Aemninja::Commands.new.create_application_scaffold!(app_path, package_name)
+elsif command == "new" then
+  Aemninja::Helpers.usage if ARGV.empty?
+
+  APP_PATH = ARGV.shift
+  Aemninja::Commands.new!(APP_PATH)
+
+
 else
-  puts 'Usage:'
-  puts '  aemninja new APP_PATH PACKAGE_NAME'
-  
-  exit 1
+  Aemninja::Helpers.usage
 end
+
+

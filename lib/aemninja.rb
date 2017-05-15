@@ -1,27 +1,43 @@
 require "aemninja/version"
 
 module Aemninja
-  class Commands
-      def create_application_scaffold!(app_path, package_name)
-        puts 'create ' + app_path
-        Dir.mkdir app_path
-        Dir.chdir app_path
+  module Commands
+    def self.deploy!(environment='local')
+      puts 'deploying to ' + environment
 
-        `mvn archetype:generate \
-          -DarchetypeRepository=http://repo.adobe.com/nexus/content/groups/public/ \
-          -DarchetypeGroupId=com.day.jcr.vault \
-          -DarchetypeArtifactId=multimodule-content-package-archetype \
-          -DarchetypeVersion=1.0.2 \
-          -DgroupId=com.cs.smaco \
-          -DartifactId=#{app_path} \
-          -Dversion=1.0-SNAPSHOT \
-          -Dpackage=#{package_name} \
-          -DappsFolderName=#{app_path} \
-          -DartifactName=#{app_path} \
-          -DcqVersion="6.2" \
-          -DpackageGroup="#{app_path}"`
+      exit 0
+    end
+    def self.new!(app_path)
+      environments_path   = app_path + "/environments"
+      development         = environments_path + "/development.rb"
+      staging             = environments_path + "/staging.rb"
+      production          = environments_path + "/production.rb"
 
-        exit 0
-      end
+      puts 'creating ' + app_path
+      `mkdir -p #{app_path}`
+
+
+      puts 'creating ' + environments_path
+      `mkdir -p #{environments_path}`
+
+      puts 'creating ' + development
+      `touch #{development}`
+
+      puts 'creating ' + staging
+      `touch #{staging}`
+
+      puts 'creating ' + production
+      `touch #{production}`
+      exit 0
+    end
+  end
+
+  module Helpers 
+    def self.usage
+      puts 'Usage:'
+      puts '  aemninja new APP_PATH'
+  
+      exit 1
+    end
   end
 end
