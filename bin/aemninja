@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+require 'aemninja'
+
+ARGV << '--help' if ARGV.empty?
+
+aliases = {
+  "g"  => "generate",
+  "d"  => "destroy",
+  "c"  => "console",
+  "s"  => "server",
+  "db" => "dbconsole",
+  "r"  => "runner"
+}
+
+command = ARGV.shift
+command = aliases[command] || command
+
+if command == "new" then
+  app_path = ARGV.shift
+  package_name = ARGV.shift
+
+  Aemninja::Commands.new.create_application_scaffold!(app_path, package_name)
+else
+  puts 'Usage:'
+  puts '  aemninja new APP_PATH PACKAGE_NAME'
+  
+  exit 1
+end
