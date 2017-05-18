@@ -16,6 +16,14 @@ elsif command == "new" then
   APP_PATH = ARGV.shift
   Aemninja::Commands.new!(APP_PATH)
 
+elsif command == "author" then
+  Aemninja::Commands.author
+
+elsif command == "publish" then
+  Aemninja::Commands.publish
+
+elsif command == "all" then
+  Aemninja::Commands.all
 
 else
   Aemninja::Helpers.usage

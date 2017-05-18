@@ -1,18 +1,32 @@
 ## Getting Started
 
-1. Install AEMNinja at the command prompt if you haven't yet:
+1. Install AEMNinja at the command prompt:
 
         $ gem install aemninja
 
-2. At the command prompt, create a new AEM application:
+1. At the command prompt, create a new AEM application:
 
         $ aemninja new myapp
+where "myapp" is the application name.
+   
+1. Copy your AEM Binary and License file into myapp/vendor/aem
 
-   where "myapp" is the application name.
+        $ cp aem-author-p4502.jar myapp/vendor/aem
 
-3. Change directory to `myapp` and start the web server:
+
+## Starting the AEM Server
+Change into the application directory.
 
         $ cd myapp
-        $ aemninja server
 
-   Run with `--help` or `-h` for options.
+### Author only
+
+        $ aemninja author
+
+### Publish only
+
+        $ aemninja publish
+
+### Author & Publish
+
+        $ aemninja all
