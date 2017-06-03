@@ -11,7 +11,7 @@ module Aemninja
   AEM_BINARY_FILE = AEM_BINARY_PATH + "/aem-author-p4502.jar"
   AEM_BINARY_LICENSE_FILE = AEM_BINARY_PATH + "/license.properties"
 
-  AEM_INSTANCES_PATH = "aem"
+  AEM_INSTANCES_PATH = "aem_instances"
   AEM_INSTANCES_AUTHOR_PATH = AEM_INSTANCES_PATH + "/" + "author"
   AEM_INSTANCES_PUBLISH_PATH = AEM_INSTANCES_PATH + "/" + "publish"
   AEM_INSTANCES_AUTHOR_BINARY = AEM_INSTANCES_AUTHOR_PATH + "/" + "aem-author-p4502.jar"
