@@ -11,7 +11,7 @@ module Aemninja
   AEM_BINARY_FILE = AEM_BINARY_PATH + "/aem-author-p4502.jar"
   AEM_BINARY_LICENSE_FILE = AEM_BINARY_PATH + "/license.properties"
 
-  AEM_INSTANCES_PATH = "instances"
+  AEM_INSTANCES_PATH = "aem"
   AEM_INSTANCES_AUTHOR_PATH = AEM_INSTANCES_PATH + "/" + "author"
   AEM_INSTANCES_PUBLISH_PATH = AEM_INSTANCES_PATH + "/" + "publish"
   AEM_INSTANCES_AUTHOR_BINARY = AEM_INSTANCES_AUTHOR_PATH + "/" + "aem-author-p4502.jar"
@@ -35,32 +35,15 @@ module Aemninja
       aem_instances_author_path    = app_path + "/" + AEM_INSTANCES_AUTHOR_PATH
       aem_instances_publish_path   = app_path + "/" + AEM_INSTANCES_PUBLISH_PATH
 
-      puts 'creating ' + app_path
-      FileUtils.mkdir_p app_path
-
-      puts 'creating ' + config_path
-      FileUtils.mkdir_p config_path
-
-      puts 'creating ' + environments_path
-      FileUtils.mkdir_p environments_path
-
-      puts 'creating ' + development_environment_file
-      FileUtils.touch development_environment_file
-
-      puts 'creating ' + vendor_path
-      FileUtils.mkdir_p vendor_path
-
-      puts 'creating ' + aem_binary_path
-      FileUtils.mkdir_p aem_binary_path
-
-      puts 'creating ' + aem_instances_path
-      FileUtils.mkdir_p aem_instances_path
-
-      puts 'creating ' + aem_instances_author_path
-      FileUtils.mkdir_p aem_instances_author_path
-
-      puts 'creating ' + aem_instances_publish_path
-      FileUtils.mkdir_p aem_instances_publish_path
+      create_directory app_path
+      create_directory config_path
+      create_directory environments_path
+      create_file development_environment_file
+      create_directory vendor_path
+      create_directory aem_binary_path
+      create_directory aem_instances_path
+      create_directory aem_instances_author_path
+      create_directory aem_instances_publish_path
 
       exit 0
     end
@@ -72,6 +55,7 @@ module Aemninja
       if File.exists?(AEM_INSTANCES_AUTHOR_BINARY)
         #puts 'checking ' + AEM_INSTANCES_AUTHOR_LICENSE
         if File.exists?(AEM_INSTANCES_AUTHOR_LICENSE)
+          # java -Xmx2048m -XX:MaxPermSize=512M -Djava.awt.headless=true  -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=30302 -jar aem-author-p4502.jar
           puts 'starting AEM author instance - ' + AEM_INSTANCES_AUTHOR_BINARY
         else
           puts "AEM License (license.properties) not found!"
@@ -106,6 +90,16 @@ module Aemninja
 
       exit 0
     end
+
+    def self.create_directory(name)
+      puts 'create ' + name
+      FileUtils.mkdir_p name
+    end
+    def self.create_file(name)
+      puts 'create ' + name
+      FileUtils.touch name
+    end
+
   end
 
   module Helpers 
