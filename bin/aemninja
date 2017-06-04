@@ -10,11 +10,8 @@ if command == "deploy" then
   environment = ARGV.shift || 'local'
   Aemninja::Commands.deploy!(environment)
 
-elsif command == "new" then
-  Aemninja::Helpers.usage if ARGV.empty?
-
-  APP_PATH = ARGV.shift
-  Aemninja::Commands.new!(APP_PATH)
+elsif command == "init" then
+  Aemninja::Commands.init!
 
 elsif command == "author" then
   Aemninja::Commands.author

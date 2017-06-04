@@ -2,22 +2,23 @@ require "aemninja/version"
 require 'fileutils'
 
 module Aemninja
+  ROOT_PATH="aemninja"
   CONFIG_PATH = "config"
-  ENVIRONMENTS_PATH = CONFIG_PATH + "/environments"
-  DEVELOPMENT_ENVIRONMENT_FILE = ENVIRONMENTS_PATH + "/development.rb"
+  ENVIRONMENTS_PATH = File.join(CONFIG_PATH, "environments")
+  DEVELOPMENT_ENVIRONMENT_FILE = File.join(ENVIRONMENTS_PATH, "development.rb")
 
   VENDOR_PATH = "vendor"
-  AEM_BINARY_PATH = VENDOR_PATH + "/aem"
-  AEM_BINARY_FILE = AEM_BINARY_PATH + "/aem-author-p4502.jar"
-  AEM_BINARY_LICENSE_FILE = AEM_BINARY_PATH + "/license.properties"
+  AEM_BINARY_PATH = File.join(VENDOR_PATH, "aem")
+  AEM_BINARY_FILE = File.join(AEM_BINARY_PATH, "aem-author-p4502.jar")
+  AEM_BINARY_LICENSE_FILE = File.join(AEM_BINARY_PATH, "license.properties")
 
   AEM_INSTANCES_PATH = "aem_instances"
-  AEM_INSTANCES_AUTHOR_PATH = AEM_INSTANCES_PATH + "/" + "author"
-  AEM_INSTANCES_PUBLISH_PATH = AEM_INSTANCES_PATH + "/" + "publish"
-  AEM_INSTANCES_AUTHOR_BINARY = AEM_INSTANCES_AUTHOR_PATH + "/" + "aem-author-p4502.jar"
-  AEM_INSTANCES_AUTHOR_LICENSE = AEM_INSTANCES_AUTHOR_PATH + "/" + "license.properties"
-  AEM_INSTANCES_PUBLISH_BINARY = AEM_INSTANCES_AUTHOR_PATH + "/" + "aem-publish-p4503.jar"
-  AEM_INSTANCES_PUBLISH_LICENSE = AEM_INSTANCES_AUTHOR_PATH + "/" + "license.properties"
+  AEM_INSTANCES_AUTHOR_PATH = File.join(AEM_INSTANCES_PATH, "author")
+  AEM_INSTANCES_PUBLISH_PATH = File.join(AEM_INSTANCES_PATH, "publish")
+  AEM_INSTANCES_AUTHOR_BINARY = File.join(AEM_INSTANCES_AUTHOR_PATH, "aem-author-p4502.jar")
+  AEM_INSTANCES_AUTHOR_LICENSE = File.join(AEM_INSTANCES_AUTHOR_PATH, "license.properties")
+  AEM_INSTANCES_PUBLISH_BINARY = File.join(AEM_INSTANCES_AUTHOR_PATH, "aem-publish-p4503.jar")
+  AEM_INSTANCES_PUBLISH_LICENSE = File.join(AEM_INSTANCES_AUTHOR_PATH, "license.properties")
 
   module Commands
     def self.deploy!(environment='local')
@@ -25,17 +26,22 @@ module Aemninja
 
       exit 0
     end
-    def self.new!(app_path)
-      config_path                  = app_path + "/" + CONFIG_PATH
-      environments_path            = app_path + "/" + ENVIRONMENTS_PATH
-      development_environment_file = app_path + "/" + DEVELOPMENT_ENVIRONMENT_FILE
-      vendor_path                  = app_path + "/" + VENDOR_PATH
-      aem_binary_path              = app_path + "/" + AEM_BINARY_PATH
-      aem_instances_path           = app_path + "/" + AEM_INSTANCES_PATH
-      aem_instances_author_path    = app_path + "/" + AEM_INSTANCES_AUTHOR_PATH
-      aem_instances_publish_path   = app_path + "/" + AEM_INSTANCES_PUBLISH_PATH
+    def self.init!
 
-      create_directory app_path
+      if File.directory? ROOT_PATH
+        puts "It seems like aemninja has already been initialized in this directory. 'aemninja' folder already exists!"
+        exit 1
+      end
+
+      config_path                  = File.join(ROOT_PATH, CONFIG_PATH)
+      environments_path            = File.join(ROOT_PATH, ENVIRONMENTS_PATH)
+      development_environment_file = File.join(ROOT_PATH, DEVELOPMENT_ENVIRONMENT_FILE)
+      vendor_path                  = File.join(ROOT_PATH, VENDOR_PATH)
+      aem_binary_path              = File.join(ROOT_PATH, AEM_BINARY_PATH)
+      aem_instances_path           = File.join(ROOT_PATH, AEM_INSTANCES_PATH)
+      aem_instances_author_path    = File.join(ROOT_PATH, AEM_INSTANCES_AUTHOR_PATH)
+      aem_instances_publish_path   = File.join(ROOT_PATH, AEM_INSTANCES_PUBLISH_PATH)
+
       create_directory config_path
       create_directory environments_path
       create_file development_environment_file
@@ -104,9 +110,17 @@ module Aemninja
 
   module Helpers 
     def self.usage
-      puts 'Usage:'
-      puts '  aemninja new APP_PATH'
-  
+
+      if( File.directory?(AEM_INSTANCES_PATH) || File.directory?(File.join(ROOT_PATH, AEM_INSTANCES_PATH)) )
+        puts 'Usage:'
+        puts '  aemninja'
+        puts '  aemninja author'
+        puts '  aemninja publish'
+      else
+        puts 'Usage:'
+        puts '  aemninja init'
+      end
+
       exit 1
     end
   end

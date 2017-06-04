@@ -12,12 +12,18 @@ where "myapp" is the application name.
 1. Copy your AEM Binary and License file into myapp/vendor/aem
 
         $ cp aem-author-p4502.jar myapp/vendor/aem
+        $ cp license.properties myapp/vendor/aem
 
 
-## Starting the AEM Server
+## Starting the development AEM Server on your local machine
+
 Change into the application directory.
 
         $ cd myapp
+
+### Author & Publish
+
+        $ aemninja all
 
 ### Author only
 
@@ -25,8 +31,5 @@ Change into the application directory.
 
 ### Publish only
 
-        $ aemninja publish
+        $ aemninja publisher
 
-### Author & Publish
-
-        $ aemninja all
