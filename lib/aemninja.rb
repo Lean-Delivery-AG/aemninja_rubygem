@@ -54,6 +54,31 @@ module Aemninja
       exit 0
     end
 
+    def self.start(instance="all")
+
+      if(instance == "all")
+        puts 'starting author instance ...'
+        puts 'starting publish instance ...'
+      elsif(instance == "author")
+        puts 'starting author instance ...'
+      elsif(instance == "publish" || instance == "publisher")
+        puts 'starting publisher instance ...'
+      else
+        Aemninja::Helpers.usage_start
+      end
+      exit 0
+    end
+
+    def self.create_directory(name)
+      puts 'create ' + name
+      FileUtils.mkdir_p name
+    end
+    def self.create_file(name)
+      puts 'create ' + name
+      FileUtils.touch name
+    end
+
+    
     def self.author
       Aemninja::Helpers.usage unless File.directory?(AEM_BINARY_PATH)
 
@@ -83,43 +108,50 @@ module Aemninja
       exit 0
     end
 
-    def self.publish
-      Aemninja::Helpers.usage unless File.directory?(AEM_BINARY_PATH)
-      puts 'starting AEM publish instance - ' + AEM_BINARY_PATH
-
-      exit 0
-    end
-
-    def self.all
-      Aemninja::Helpers.usage unless File.directory?(AEM_BINARY_PATH)
-      puts 'starting AEM author & publish instance - ' + AEM_BINARY_PATH
-
-      exit 0
-    end
-
-    def self.create_directory(name)
-      puts 'create ' + name
-      FileUtils.mkdir_p name
-    end
-    def self.create_file(name)
-      puts 'create ' + name
-      FileUtils.touch name
-    end
-
   end
 
-  module Helpers 
+  module Helpers
     def self.usage
 
       if( File.directory?(AEM_INSTANCES_PATH) || File.directory?(File.join(ROOT_PATH, AEM_INSTANCES_PATH)) )
-        puts 'Usage:'
-        puts '  aemninja'
-        puts '  aemninja author'
-        puts '  aemninja publish'
+        puts
+        puts
+       puts 'Usage'
+        puts
+        puts '  aemninja COMMAND [ARGS]'
+        puts
+        puts 'Available COMMANDs are'
+        puts '  start [author, publisher, all]                # start author, publisher or both(default)'
+        puts
+        puts
+        puts
       else
+        puts
+        puts
         puts 'Usage:'
-        puts '  aemninja init'
+        puts
+        puts '  aemninja init                                 # creates "aemninja" base directory in the current directory, adds a line to .gitignore'
+        puts
+        puts
+        puts
       end
+
+      exit 1
+    end
+    def self.usage_start
+      puts
+      puts
+      puts 'Usage'
+      puts
+      puts '  aemninja start [ARGS]'
+      puts
+      puts 'Available ARGS are'
+      puts '  aemninja start [all]                            # default, starts author and publisher instance'
+      puts '  aemninja start author                           # starts author instance'
+      puts '  aemninja start publish[er]                      # starts publisher instance'
+      puts
+      puts
+      puts
 
       exit 1
     end

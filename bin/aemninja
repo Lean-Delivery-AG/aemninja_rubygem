@@ -13,14 +13,10 @@ if command == "deploy" then
 elsif command == "init" then
   Aemninja::Commands.init!
 
-elsif command == "author" then
-  Aemninja::Commands.author
+elsif command == "start" then
 
-elsif command == "publish" then
-  Aemninja::Commands.publish
-
-elsif command == "all" then
-  Aemninja::Commands.all
+  instance = ARGV.shift || 'all'
+  Aemninja::Commands.start(instance)
 
 else
   Aemninja::Helpers.usage
