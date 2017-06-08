@@ -7,22 +7,23 @@ module Aemninja
   class Application
 
     ROOT_PATH="aemninja"
-    CONFIG_PATH = "config"
+    CONFIG_PATH = File.join(ROOT_PATH, "config")
     ENVIRONMENTS_PATH = File.join(CONFIG_PATH, "environments")
     DEVELOPMENT_ENVIRONMENT_FILE = File.join(ENVIRONMENTS_PATH, "development.rb")
 
-    VENDOR_PATH = "vendor"
+    VENDOR_PATH = File.join(ROOT_PATH, "vendor")
     AEM_BINARY_PATH = File.join(VENDOR_PATH, "aem")
-    AEM_BINARY_FILE = File.join(AEM_BINARY_PATH, "aem-author-p4502.jar")
     AEM_BINARY_LICENSE_FILE = File.join(AEM_BINARY_PATH, "license.properties")
 
-    AEM_INSTANCES_PATH = "aem_instances"
+    AEM_INSTANCES_PATH = File.join(ROOT_PATH, "aem_instances")
     AEM_INSTANCES_AUTHOR_PATH = File.join(AEM_INSTANCES_PATH, "author")
     AEM_INSTANCES_PUBLISH_PATH = File.join(AEM_INSTANCES_PATH, "publish")
-    AEM_INSTANCES_AUTHOR_BINARY = File.join(AEM_INSTANCES_AUTHOR_PATH, "aem-author-p4502.jar")
+    AEM_INSTANCES_AUTHOR_BINARY_NAME = "aem-author-p4502.jar"
+    AEM_INSTANCES_AUTHOR_BINARY = File.join(AEM_INSTANCES_AUTHOR_PATH, AEM_INSTANCES_AUTHOR_BINARY_NAME)
     AEM_INSTANCES_AUTHOR_LICENSE = File.join(AEM_INSTANCES_AUTHOR_PATH, "license.properties")
-    AEM_INSTANCES_PUBLISH_BINARY = File.join(AEM_INSTANCES_AUTHOR_PATH, "aem-publish-p4503.jar")
-    AEM_INSTANCES_PUBLISH_LICENSE = File.join(AEM_INSTANCES_AUTHOR_PATH, "license.properties")
+    AEM_INSTANCES_PUBLISH_BINARY_NAME = "aem-publish-p4503.jar"
+    AEM_INSTANCES_PUBLISH_BINARY = File.join(AEM_INSTANCES_PUBLISH_PATH, AEM_INSTANCES_PUBLISH_BINARY_NAME)
+    AEM_INSTANCES_PUBLISH_LICENSE = File.join(AEM_INSTANCES_PUBLISH_PATH, "license.properties")
 
     def init!
       if File.directory? ROOT_PATH
@@ -60,46 +61,69 @@ module Aemninja
 
     def start(instance="all")
       if(instance == "all")
-        puts 'starting author instance ...'
-        puts 'starting publish instance ...'
+
+        start_author
+        start_publisher
+
       elsif(instance == "author")
-        puts 'starting author instance ...'
+
+        start_author
+
       elsif(instance == "publish" || instance == "publisher")
-        puts 'starting publisher instance ...'
+
+        start_publisher
+
       else
+
         Aemninja::Usage.start
+
       end
 
       exit 0
     end
 
-    def author
-      Aemninja::Usage.init unless File.directory?(AEM_BINARY_PATH)
+    def start_author
+      puts 'starting AEM author instance ...'
+      if not File.exists? AEM_INSTANCES_AUTHOR_BINARY
+        puts "Adobe Experience Manager JAR File '" + AEM_INSTANCES_AUTHOR_BINARY + "' not found!"
 
-      #puts 'checking ' + AEM_INSTANCES_AUTHOR_BINARY
-      if File.exists?(AEM_INSTANCES_AUTHOR_BINARY)
-        #puts 'checking ' + AEM_INSTANCES_AUTHOR_LICENSE
-        if File.exists?(AEM_INSTANCES_AUTHOR_LICENSE)
-          # java -Xmx2048m -XX:MaxPermSize=512M -Djava.awt.headless=true  -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=30302 -jar aem-author-p4502.jar
-          puts 'starting AEM author instance - ' + AEM_INSTANCES_AUTHOR_BINARY
-        else
-          puts "AEM License (license.properties) not found!"
-          exit 1
-        end
-      else
-        #puts 'checking ' + AEM_BINARY_FILE
-        if File.exists?(AEM_BINARY_FILE)
-          puts 'copying AEM author instance ' + AEM_BINARY_FILE + " -> " + AEM_INSTANCES_AUTHOR_BINARY
-          puts 'copying License file ' + AEM_BINARY_LICENSE_FILE + " -> " + AEM_INSTANCES_AUTHOR_LICENSE
-          puts 'starting AEM author instance - ' + AEM_INSTANCES_AUTHOR_BINARY
-        else
-          puts 'No AEM runtime found!'
-          puts 'Please add aem-author-p4502.jar and license.properties to ' + AEM_BINARY_PATH
-
-          exit 1
-        end
+        exit 1
       end
-      exit 0
+      
+      if not File.exists? AEM_INSTANCES_AUTHOR_LICENSE
+        puts "AEM License (" + AEM_INSTANCES_AUTHOR_LICENSE + ") not found in" + AEM_INSTANCES_AUTHOR_PATH
+
+        exit 1
+      end
+
+      Dir.chdir(AEM_INSTANCES_AUTHOR_PATH) do
+        #system "rails server &"
+        pid = spawn 'java -server -Xmx1024m -Djava.awt.headless=true -jar ' + AEM_INSTANCES_AUTHOR_BINARY_NAME
+        puts 'PID: ' + pid.to_s
+      end
+
+    end
+
+    def start_publisher
+      puts 'starting AEM publisher instance ...'
+      if not File.exists? AEM_INSTANCES_PUBLISH_BINARY
+        puts "Adobe Experience Manager JAR File '" + AEM_INSTANCES_PUBLISH_BINARY + "' not found!"
+
+        exit 1
+      end
+      
+      if not File.exists? AEM_INSTANCES_PUBLISH_LICENSE
+        puts "AEM License (" + AEM_INSTANCES_PUBLISH_LICENSE + ") not found in" + AEM_INSTANCES_PUBLISH_PATH
+
+        exit 1
+      end
+
+      Dir.chdir(AEM_INSTANCES_PUBLISH_PATH) do
+        #system "rails server &"
+        pid = spawn 'java -server -Xmx1024m -Djava.awt.headless=true -jar ' + AEM_INSTANCES_PUBLISH_BINARY_NAME
+        puts 'PID: ' + pid.to_s
+      end
+
     end
 
     def no_valid_command
