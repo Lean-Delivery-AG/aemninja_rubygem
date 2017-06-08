@@ -31,23 +31,24 @@ module Aemninja
         exit 1
       end
 
-      config_path                  = File.join(ROOT_PATH, CONFIG_PATH)
-      environments_path            = File.join(ROOT_PATH, ENVIRONMENTS_PATH)
-      development_environment_file = File.join(ROOT_PATH, DEVELOPMENT_ENVIRONMENT_FILE)
-      vendor_path                  = File.join(ROOT_PATH, VENDOR_PATH)
-      aem_binary_path              = File.join(ROOT_PATH, AEM_BINARY_PATH)
-      aem_instances_path           = File.join(ROOT_PATH, AEM_INSTANCES_PATH)
-      aem_instances_author_path    = File.join(ROOT_PATH, AEM_INSTANCES_AUTHOR_PATH)
-      aem_instances_publish_path   = File.join(ROOT_PATH, AEM_INSTANCES_PUBLISH_PATH)
+      Aemninja::Helpers::create_directory ROOT_PATH
+      Aemninja::Helpers::create_directory CONFIG_PATH
+      Aemninja::Helpers::create_directory ENVIRONMENTS_PATH
+      Aemninja::Helpers::create_file DEVELOPMENT_ENVIRONMENT_FILE
+      Aemninja::Helpers::create_directory VENDOR_PATH
+      Aemninja::Helpers::create_directory AEM_BINARY_PATH
+      Aemninja::Helpers::create_directory AEM_INSTANCES_PATH
+      Aemninja::Helpers::create_directory AEM_INSTANCES_AUTHOR_PATH
+      Aemninja::Helpers::create_directory AEM_INSTANCES_PUBLISH_PATH
 
-      Aemninja::Helpers::create_directory config_path
-      Aemninja::Helpers::create_directory environments_path
-      Aemninja::Helpers::create_file development_environment_file
-      Aemninja::Helpers::create_directory vendor_path
-      Aemninja::Helpers::create_directory aem_binary_path
-      Aemninja::Helpers::create_directory aem_instances_path
-      Aemninja::Helpers::create_directory aem_instances_author_path
-      Aemninja::Helpers::create_directory aem_instances_publish_path
+
+      puts "append " + AEM_INSTANCES_PATH + " to .gitignore"
+      File.open('.gitignore', 'a') do |f|
+        f.puts
+        f.puts "# AEMNinja - Exclude AEM Author & Publisher Server directories"
+        f.puts AEM_INSTANCES_PATH
+      end
+
 
       exit 0
 
