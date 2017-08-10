@@ -8,17 +8,14 @@ command = ARGV.shift
 
 aemninja = Aemninja::Application::new
 
+
 if command == "deploy" then
+  pkg = ARGV.shift || Aemninja::Usage.deploy
   environment = ARGV.shift || 'local'
-  aemninja.deploy!(environment)
+  aemninja.deploy!(pkg, environment)
 
 elsif command == "init" then
   aemninja.init!
-
-elsif command == "start" then
-
-  instance = ARGV.shift || 'all'
-  aemninja.start(instance)
 
 else
   aemninja.no_valid_command
