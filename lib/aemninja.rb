@@ -16,8 +16,7 @@ module Aemninja
 
     def init!
       if File.directory? ROOT_PATH
-        puts "It seems like aemninja has already been initialized in this directory. '.aemninja' folder already exists!"
-        exit 1
+        Aemninja::Errors::not_a_directory(pkg)
       end
 
       Aemninja::Helpers::create_directory ROOT_PATH
