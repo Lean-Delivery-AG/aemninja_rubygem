@@ -6,8 +6,8 @@ module Aemninja
       exit 1
     end
 
-    def self.not_a_directory(path)
-      puts 'ERROR: ' + path + ' is not a file!'
+    def self.already_initialized(path)
+      puts 'It seems like aemninja has already been initialized in this directory. "' + path + '" folder already exists!'
       exit 2
     end
 

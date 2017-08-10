@@ -16,7 +16,7 @@ module Aemninja
 
     def init!
       if File.directory? ROOT_PATH
-        Aemninja::Errors::not_a_directory(pkg)
+        Aemninja::Errors::already_initialized(ROOT_PATH)
       end
 
       Aemninja::Helpers::create_directory ROOT_PATH
