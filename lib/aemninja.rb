@@ -40,7 +40,7 @@ module Aemninja
           installed_package_name = is_package_installed? pkg
 
           if installed_package_name != nil
-            puts "uninstall existing package " + installed_package_name + " from " + environment
+            puts "uninstall " + installed_package_name + " from " + environment
           end
 
           # UNINSTALL
