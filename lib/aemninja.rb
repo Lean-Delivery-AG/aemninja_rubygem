@@ -37,11 +37,20 @@ module Aemninja
          if File.file?(pkg)
           #puts 'deploy package ' + pkg +  ' to ' + environment
 
-          installed_package_name = is_package_installed? pkg
+          package_without_path = URI(pkg).path.split('/').last
+          stripped_pkg = package_without_path.split(/[0-9]/)[0]
+
+          installed_package_name = aem_is_package_installed? stripped_pkg
 
           if installed_package_name != nil
             puts "uninstall " + installed_package_name + " from " + environment
+            aem_uninstall installed_package_name
+          else
+            puts "Package " + package_without_path + " not found on " + environment + ". Skipping uninstall."
           end
+
+          aem_install(pkg, stripped_pkg)
+
 
           # UNINSTALL
           #   request = RestClient::Request.new( 
@@ -117,24 +126,68 @@ module Aemninja
     #         <lastUnpacked>Thu, 10 Aug 2017 13:42:23 +0200</lastUnpacked>
     #         <lastUnpackedBy>admin</lastUnpackedBy>
     #       </package>
-    def is_package_installed? package
-
-
-      stripped_pkg = URI(package).path.split('/').last.split(/[0-9]/)[0]
-
+    def aem_is_package_installed? package
       response_xml = RestClient.get 'admin:admin@localhost:4502/crx/packmgr/service.jsp', {params: {cmd: 'ls'}}
 
       response_hash = Hash.from_xml(response_xml.body)
 
       installed_packages = response_hash["crx"]["response"]["data"]["packages"]["package"]
 
-      if h = installed_packages.find { |h| h['downloadName'].include? stripped_pkg }
-        result = h['downloadName']
+      if h = installed_packages.find { |h| h['downloadName'].include? package }
+        result = h['group'] + "/" + h['downloadName']
       else
         result = nil
       end
 
       result
+    end
+
+    # TODO
+    def aem_uninstall package
+
+      response_xml = RestClient.get 'admin:admin@localhost:4502/crx/packmgr/service.jsp', {params: {cmd: 'ls'}}
+
+      puts "# UNINSTALL"
+      request = RestClient::Request.new( 
+                :method => :post,
+                :url => "admin:admin@localhost:4502/crx/packmgr/service/.json/etc/packages/#{package}",
+                :payload => {
+                    :cmd => 'uninstall'
+                })
+      response = request.execute
+
+      puts response.to_s
+
+      puts "# DELETE"
+      request = RestClient::Request.new( 
+          :method => :post,
+          :url => "admin:admin@localhost:4502/crx/packmgr/service/.json/etc/packages/#{package}",
+          :payload => {
+              :cmd => 'delete'
+          })
+      response = request.execute
+
+      puts response.to_s
+
+    end
+
+    def aem_install(package, stripped_pkg)
+      puts "# INSTALL PACKAGE"
+      request = RestClient::Request.new( 
+
+          :method => :post,
+          :url => 'admin:admin@localhost:4502/crx/packmgr/service.jsp',
+          :payload => {
+              :multipart => true,
+              :file => File.new(package, 'rb'),
+              :name => stripped_pkg,
+              :force => true,
+              :install => true
+          })
+      response = request.execute
+
+      puts response.to_s
+
     end
 
   end
