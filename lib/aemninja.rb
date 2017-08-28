@@ -50,7 +50,19 @@ module Aemninja
       Aemninja::Helpers::create_directory ROOT_PATH
       Aemninja::Helpers::create_directory CONFIG_PATH
       Aemninja::Helpers::create_directory ENVIRONMENTS_PATH
+
       Aemninja::Helpers::create_file ENVIRONMENT_CONFIG_FILE_LOCAL
+
+      open(ENVIRONMENT_CONFIG_FILE_LOCAL, 'w') do |f|
+        f.puts 'Aemninja.configure do |config|'
+        f.puts '  config.instances = {'
+        f.puts '    author: { host: "localhost:4502", user: "admin", password: "admin"},'
+        f.puts '    publish: { host: "localhost:4503", user: "admin", password: "admin"}'
+        f.puts '  }'
+        f.puts 'end'
+      end
+
+
       Aemninja::Helpers::create_file ENVIRONMENT_CONFIG_FILE_STAGING
       Aemninja::Helpers::create_file ENVIRONMENT_CONFIG_FILE_PRODUCTION
 
