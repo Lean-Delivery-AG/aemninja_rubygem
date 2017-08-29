@@ -100,34 +100,57 @@ module Aemninja
           package_without_path = Aemninja::Helpers::remove_path_from package
           stripped_pkg = Aemninja::Helpers::remove_path_and_version_from package
 
+          puts "--------------------------------------------------------"
+          puts "Deployment to \'#{environment}\' environment"
+          puts "--------------------------------------------------------"
+          puts
+          puts "Configuration: .aemninja/config/environments/#{environment}.rb"
+          puts
 
           require "./.aemninja/config/environments/#{environment}.rb"
 
           Aemninja.configuration.instances.each do |key, array|
-            puts "Deploying to '" + key.to_s + "'"
-
             host = array[:host]
             user = array[:user]
             password = array[:password]
 
-            puts "host: " + host
-            puts "user: " + user
-            puts "password: " + password
+            puts
+            puts key.to_s + " [" + host + "]"
+
+            # puts "host: " + host
+            # puts "user: " + user
+            # puts "password: " + password
 
             installed_package_name = Aem::is_package_installed? host, user, password, stripped_pkg
 
             if installed_package_name != nil
-              puts "uninstall " + installed_package_name + " from " + environment
-              Aem::uninstall host, user, password, installed_package_name
+              print  "  uninstall " + installed_package_name + " from " + host
+              rc = Aem::uninstall host, user, password, installed_package_name
+              if rc == true
+                puts "   OK"
+              else
+                puts "   FAILED"
+              end
 
-              puts "delete " + installed_package_name + " from " + environment
-              Aem::delete host, user, password, installed_package_name
+              print "  delete " + installed_package_name + " from " + host
+              rc = Aem::delete host, user, password, installed_package_name
+              if rc == true
+                puts "   OK"
+              else
+                puts "   FAILED"
+              end
+
             else
-              puts "Package " + package_without_path + " not found on " + environment + ". Skipping uninstall."
+              puts "  Package " + package_without_path + " not found on " + host + ". Skipping uninstall."
             end
 
-            Aem::install host, user, password, package
-
+            print "  install " + package + " to " + host
+            rc = Aem::install host, user, password, package
+            if rc == true
+                puts "   OK"
+              else
+                puts "   FAILED"
+              end
           end
 
 
