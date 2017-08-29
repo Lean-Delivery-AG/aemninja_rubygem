@@ -2,10 +2,8 @@ require "aemninja/version"
 require "aemninja/errors"
 require "aemninja/helpers"
 require "aemninja/usage"
+require "aemninja/aem"
 require 'fileutils'
-require 'RestClient'
-require 'active_support/core_ext/hash'
-
 
 module Aemninja
   class Configuration
@@ -116,16 +114,19 @@ module Aemninja
             puts "user: " + user
             puts "password: " + password
 
-            installed_package_name = aem_is_package_installed? host, user, password, stripped_pkg
+            installed_package_name = Aem::is_package_installed? host, user, password, stripped_pkg
 
             if installed_package_name != nil
               puts "uninstall " + installed_package_name + " from " + environment
-              aem_uninstall host, user, password, installed_package_name
+              Aem::uninstall host, user, password, installed_package_name
+
+              puts "delete " + installed_package_name + " from " + environment
+              Aem::delete host, user, password, installed_package_name
             else
               puts "Package " + package_without_path + " not found on " + environment + ". Skipping uninstall."
             end
 
-            aem_install host, user, password, package
+            Aem::install host, user, password, package
 
           end
 
@@ -143,96 +144,6 @@ module Aemninja
 
     def no_valid_command
       Aemninja::Usage.commands
-    end
-
-
-    # is_package_installed?
-    # RestClient.get 'admin:admin@localhost:4502/crx/packmgr/service.jsp', {params: {cmd: 'ls'}}
-
-    # group>adobe/aem6/sample</group>\n
-    # <downloadName>cq-geometrixx-outdoors-ugc-pkg-5.8.18.zip</downloadName>\n
-
-
-    # <crx version="1.4.1" user="admin" workspace="crx.default">
-    # <request>
-    #   <param name="cmd" value="ls"/>
-    # </request>
-    # <response>
-    #   <data>
-    #     <packages>
-    #       <package>
-    #         <group>Adobe/granite</group>
-    #         <name>com.adobe.granite.httpcache.content</name>
-    #         <version>1.0.2</version>
-    #         <downloadName>com.adobe.granite.httpcache.content-1.0.2.zip</downloadName>
-    #         <size>13323</size>
-    #         <created>Tue, 25 Feb 2014 11:40:56 +0100</created>
-    #         <createdBy>Adobe</createdBy>
-    #         <lastModified></lastModified>
-    #         <lastModifiedBy>null</lastModifiedBy>
-    #         <lastUnpacked>Thu, 10 Aug 2017 13:42:23 +0200</lastUnpacked>
-    #         <lastUnpackedBy>admin</lastUnpackedBy>
-    #       </package>
-    def aem_is_package_installed? host="localhost:4502", user="admin", password="admin", package
-      response_xml = RestClient.get "#{user}:#{password}@#{host}/crx/packmgr/service.jsp", {params: {cmd: 'ls'}}
-
-      response_hash = Hash.from_xml(response_xml.body)
-
-      installed_packages = response_hash["crx"]["response"]["data"]["packages"]["package"]
-
-      if ary = installed_packages.find { |h| h['downloadName'].include? package }
-        result = ary['group'] + "/" + ary['downloadName']
-      else
-        result = nil
-      end
-
-      result
-    end
-
-    def aem_uninstall host="localhost:4502", user="admin", password="admin", package
-
-      puts "# UNINSTALL"
-      request = RestClient::Request.new( 
-                :method => :post,
-                :url => "#{user}:#{password}@#{host}/crx/packmgr/service/.json/etc/packages/#{package}",
-                :payload => {
-                    :cmd => 'uninstall'
-                })
-      response = request.execute
-
-      puts response.to_s
-
-      puts "# DELETE"
-      request = RestClient::Request.new( 
-          :method => :post,
-          :url => "#{user}:#{password}@#{host}/crx/packmgr/service/.json/etc/packages/#{package}",
-          :payload => {
-              :cmd => 'delete'
-          })
-      response = request.execute
-
-      puts response.to_ s
-
-    end
-
-    def aem_install host="localhost:4502", user="admin", password="admin", package
-      puts "# INSTALL PACKAGE"
-      stripped_pkg = Aemninja::Helpers::remove_path_and_version_from package
-      request = RestClient::Request.new( 
-
-          :method => :post,
-          :url => "#{user}:#{password}@#{host}/crx/packmgr/service.jsp",
-          :payload => {
-              :multipart => true,
-              :file => File.new(package, 'rb'),
-              :name => stripped_pkg,
-              :force => true,
-              :install => true
-          })
-      response = request.execute
-
-      puts response.to_s
-
     end
 
   end
