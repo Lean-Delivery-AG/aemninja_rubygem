@@ -99,8 +99,8 @@ module Aemninja
          if File.file?(package)
           #puts 'deploy package ' + package +  ' to ' + environment
 
-          package_without_path = remove_path_from package
-          stripped_pkg = remove_path_and_version_from package
+          package_without_path = Aemninja::Helpers::remove_path_from package
+          stripped_pkg = Aemninja::Helpers::remove_path_and_version_from package
 
 
           require "./.aemninja/config/environments/#{environment}.rb"
@@ -180,8 +180,8 @@ module Aemninja
 
       installed_packages = response_hash["crx"]["response"]["data"]["packages"]["package"]
 
-      if h = installed_packages.find { |h| h['downloadName'].include? package }
-        result = h['group'] + "/" + h['downloadName']
+      if ary = installed_packages.find { |h| h['downloadName'].include? package }
+        result = ary['group'] + "/" + ary['downloadName']
       else
         result = nil
       end
@@ -190,8 +190,6 @@ module Aemninja
     end
 
     def aem_uninstall host="localhost:4502", user="admin", password="admin", package
-
-      response_xml = RestClient.get "#{user}:#{password}@#{host}/crx/packmgr/service.jsp", {params: {cmd: 'ls'}}
 
       puts "# UNINSTALL"
       request = RestClient::Request.new( 
@@ -213,13 +211,13 @@ module Aemninja
           })
       response = request.execute
 
-      puts response.to_s
+      puts response.to_ s
 
     end
 
     def aem_install host="localhost:4502", user="admin", password="admin", package
       puts "# INSTALL PACKAGE"
-      stripped_pkg = remove_path_and_version_from package
+      stripped_pkg = Aemninja::Helpers::remove_path_and_version_from package
       request = RestClient::Request.new( 
 
           :method => :post,
@@ -235,19 +233,6 @@ module Aemninja
 
       puts response.to_s
 
-    end
-
-    def remove_path_from package
-      URI(package).path.split('/').last
-    end
-
-    def remove_version_from package
-      package.split(/[0-9]/)[0]
-    end
-
-    def remove_path_and_version_from package
-      package_without_path = remove_path_from package
-      remove_version_from package_without_path
     end
 
   end
