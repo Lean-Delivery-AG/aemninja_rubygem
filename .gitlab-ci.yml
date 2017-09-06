@@ -1,0 +1,3 @@
+test:
+  script:
+  - bundle exec rake test
