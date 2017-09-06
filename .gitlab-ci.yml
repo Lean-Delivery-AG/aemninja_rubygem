@@ -1,7 +1,13 @@
-test:
-  script:
-  - bundle exec rake test
+image: ruby:2.4.1
+
+stages:
+  - build
+  - test
 
 build:
   script:
   - gem build aemninja.gemspec
+
+test:
+  script:
+  - bundle exec rake test
