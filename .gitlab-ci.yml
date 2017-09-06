@@ -10,5 +10,5 @@ build:
 
 test:
   script:
-  - bundle install --path /cache
+  - bundle install
   - bundle exec rake test
