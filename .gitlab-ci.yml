@@ -1,3 +1,7 @@
 test:
   script:
   - bundle exec rake test
+
+build:
+  script:
+  - gem build aemninja.gemspec
