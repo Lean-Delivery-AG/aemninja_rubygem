@@ -1,5 +1,5 @@
 require 'json'
-require 'RestClient'
+require 'rest-client'
 require 'active_support/core_ext/hash'
 
 module Aem
