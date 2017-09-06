@@ -1,7 +1,7 @@
 require "minitest/autorun"
 require 'rubygems'
 require 'vcr'
-require 'RestClient'
+require 'rest-client'
 require "./lib/aemninja/aem.rb"
 
 VCR.configure do |config|
