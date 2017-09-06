@@ -11,4 +11,4 @@ build:
 test:
   script:
   - bundle install
-  - bundle exec rake test
+  - rake test
