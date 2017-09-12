@@ -28,7 +28,7 @@
 		$ aemninja deploy apps/target/your-magic-project.zip production
 
 
-But how does it now the details about my environments?
+## But how does it now the details about my environments?
 
  * .aemninja/config/environments/local.rb
  * .aemninja/config/environments/staging.rb
