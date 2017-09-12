@@ -92,7 +92,16 @@ module Aem
 
     #response_hash = Hash.from_xml(response_xml.body)
 
-    if Hash.from_xml(response_xml.body)["crx"]["response"]["status"] == 'ok'
+    errors = response_xml.body.each_line.grep /^E/
+
+    if errors.present?
+      puts
+      puts
+      puts "  ERRORS:"
+      puts errors
+      puts
+      return false
+    elsif Hash.from_xml(response_xml.body)["crx"]["response"]["status"] == 'ok'
       return true
     else
       return false
