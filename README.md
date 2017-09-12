@@ -19,28 +19,27 @@
 # Deployment
 
 ## Local 
-aemninja deploy apps/target/your-magic-project.zip
+		$ aemninja deploy apps/target/your-magic-project.zip
 
 ## Staging
-aemninja deploy apps/target/your-magic-project.zip staging
+		$ aemninja deploy apps/target/your-magic-project.zip staging
 
 ## Production
-aemninja deploy apps/target/your-magic-project.zip production
+		$ aemninja deploy apps/target/your-magic-project.zip production
 
 
 But how does it now the details about my environments?
 
-.aemninja/config/environments/local.rb
-.aemninja/config/environments/staging.rb
-.aemninja/config/environments/production.rb
-author {...}
+ * .aemninja/config/environments/local.rb
+ * .aemninja/config/environments/staging.rb
+ * .aemninja/config/environments/production.rb
 
-## Can I addadditional environments?
+## Can I add additional environments?
 
 Sure! It's as easy as adding another config file to the environments directory. The name of the file can then be used with aemninja.
 
 ### New Environment called 'qa'
 1. Copy existing config file
-cp .aemninja/config/environments/local.rb .aemninja/config/environments/qa.rb 
+		$ cp .aemninja/config/environments/local.rb .aemninja/config/environments/qa.rb 
 
 2. Change the configuration to match your qa environment
