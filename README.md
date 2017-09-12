@@ -4,9 +4,16 @@
 
         $ gem install aemninja
 
-1. At the command prompt, initialize aemninja:
+1. In your project directory, initialize aemninja:
 
+        $ cd my_aem_project
         $ aemninja init
+        create .aemninja
+		create .aemninja/config
+		create .aemninja/config/environments
+		create .aemninja/config/environments/local.rb
+		create .aemninja/config/environments/staging.rb
+		create .aemninja/config/environments/production.rb
 
 
 # Deployment
