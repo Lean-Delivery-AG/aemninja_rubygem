@@ -1,3 +1,4 @@
+require 'base64'
 require 'json'
 require 'rest-client'
 require 'active_support/core_ext/hash'
@@ -33,8 +34,21 @@ module Aem
   #
   # returns adobe/aem6/sample/we.retail.download-1.0.8.zip
   #
+  def self.list host="localhost:4502", user="admin", password="admin"
+    # puts user
+    # puts password
+    # puts "#{user}:#{password}"
+    auth = Base64.strict_encode64("#{user}:#{password}")
+    # puts auth
+    response_xml = RestClient.get "#{host}/crx/packmgr/service.jsp", {params: {cmd: 'ls'}, Authorization: "Basic #{auth}"}
+
+    puts response_xml
+  end
+
   def self.is_package_installed? host="localhost:4502", user="admin", password="admin", package
-    response_xml = RestClient.get "#{user}:#{password}@#{host}/crx/packmgr/service.jsp", {params: {cmd: 'ls'}}
+    auth = Base64.strict_encode64("#{user}:#{password}")
+
+    response_xml = RestClient.get "#{host}/crx/packmgr/service.jsp", {params: {cmd: 'ls'}, Authorization: "Basic #{auth}"}
 
     response_hash = Hash.from_xml(response_xml.body)
 
@@ -50,24 +64,30 @@ module Aem
   end
 
   def self.uninstall host="localhost:4502", user="admin", password="admin", package
+    auth = Base64.strict_encode64("#{user}:#{password}")
     request = RestClient::Request.new( 
-              :method => :post,
-              :url => "#{user}:#{password}@#{host}/crx/packmgr/service/.json/etc/packages/#{package}",
-              :payload => {
-                  :cmd => 'uninstall'
-              })
+        :method => :post,
+        :url => "#{host}/crx/packmgr/service/.json/etc/packages/#{package}",
+        :payload => {
+            :cmd => 'uninstall'
+        },
+        :headers => {Authorization: "Basic #{auth}"}
+    )
     response = request.execute
 
     JSON.parse(response)["success"]
   end
 
     def self.delete host="localhost:4502", user="admin", password="admin", package
+      auth = Base64.strict_encode64("#{user}:#{password}")
       request = RestClient::Request.new( 
           :method => :post,
-          :url => "#{user}:#{password}@#{host}/crx/packmgr/service/.json/etc/packages/#{package}",
+          :url => "#{host}/crx/packmgr/service/.json/etc/packages/#{package}",
           :payload => {
               :cmd => 'delete'
-          })
+          },
+          :headers => {Authorization: "Basic #{auth}"}
+      )
       response = request.execute
 
       JSON.parse(response)["success"]
@@ -76,18 +96,20 @@ module Aem
 
 
   def self.install host="localhost:4502", user="admin", password="admin", package
+    auth = Base64.strict_encode64("#{user}:#{password}")
     stripped_pkg = Aemninja::Helpers::remove_path_and_version_from package
     request = RestClient::Request.new( 
-
         :method => :post,
-        :url => "#{user}:#{password}@#{host}/crx/packmgr/service.jsp",
+        :url => "@#{host}/crx/packmgr/service.jsp",
         :payload => {
             :multipart => true,
             :file => File.new(package, 'rb'),
             :name => stripped_pkg,
             :force => true,
             :install => true
-        })
+        },
+        :headers => {Authorization: "Basic #{auth}"}
+    )
     response_xml = request.execute
 
     #response_hash = Hash.from_xml(response_xml.body)

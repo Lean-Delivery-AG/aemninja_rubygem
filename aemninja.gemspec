@@ -7,11 +7,11 @@ Gem::Specification.new do |spec|
   spec.name          = "aemninja"
   spec.version       = Aemninja::VERSION
   spec.authors       = ["AEMNinja"]
-  spec.email         = ["info@aemninja.com"]
+  spec.email         = ["info@lean.delivery"]
 
   spec.summary       = %q{AEM scripting Gem}
   spec.description   = %q{Reduces complexity of AEM deployments.}
-  spec.homepage      = "https://gitlab.com/aemninja/aemninja"
+  spec.homepage      = "https://github.com/Lean-Delivery-AG/aemninja_rubygem"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

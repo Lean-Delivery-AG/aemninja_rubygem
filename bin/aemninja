@@ -17,6 +17,9 @@ if command == "deploy" then
 elsif command == "init" then
   aemninja.init!
 
+elsif command == "list" then
+  aemninja.list!
+
 else
   aemninja.no_valid_command
 end

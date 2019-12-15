@@ -84,6 +84,30 @@ module Aemninja
 
     end
 
+    def list!(environment='local')
+      puts "--------------------------------------------------------"
+      puts "Deployment to \'#{environment}\' environment"
+      puts "--------------------------------------------------------"
+      puts
+      puts "Configuration: .aemninja/config/environments/#{environment}.rb"
+      puts
+
+      require "./.aemninja/config/environments/#{environment}.rb"
+
+      Aemninja.configuration.instances.each do |key, array|
+        host = array[:host]
+        user = array[:user]
+        password = array[:password]
+
+        puts
+        puts key.to_s + " [" + host + "]"
+
+        Aem::list host, user, password
+
+      end
+    end
+
+
     def deploy!(package, environment='local')
 
       # Read Environment from Config File
